@@ -116,7 +116,8 @@ class KNRMModel(object):
             self.loss = tf.reduce_mean(tf.maximum(0.0, 1 - self.pos_scores + tf.reduce_mean(self.neg_scores, 1)))
             tf.summary.scalar("loss", self.loss)
 
-        self.global_step = tf.train.get_or_create_global_step()
+        # self.global_step = tf.train.get_or_create_global_step()
+        self.global_step = tf.contrib.framework.get_or_create_global_step()
 
         optimizer = self.optimizer(self.learning_rate)
         self.grads_and_vars = optimizer.compute_gradients(self.loss)

@@ -30,7 +30,7 @@ def get_config_args():
     parser.add_argument('--activation', type=str, default='relu', help='activation function')
     parser.add_argument('--optimizer', type=str, default='grad', help='optimizer')
     parser.add_argument('--num-epochs', type=int, default=10, help='the number of training epochs')
-    parser.add_argument('--batch-size', type=int, default=3, help='the batch size')
+    parser.add_argument('--batch-size', type=int, default=1024, help='the batch size')
     parser.add_argument('--embedding-dim', type=int, default=200, help='Dimensionality of word embedding')
     parser.add_argument('--vocabulary-size', type=int, default=2000000, help='Size of vocabulary')
     parser.add_argument('--learning-rate', type=float, default=0.1, help='the learning rate')
