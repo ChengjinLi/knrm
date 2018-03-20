@@ -26,7 +26,7 @@ def get_config_args():
     #                     help='the path that keeps the train data file')
     # parser.add_argument('--test-data-path', type=str, default='./data/dev.pairs.hashed.shuf',
     #                     help='the path that keeps the test data file')
-    # parser.add_argument('--model-dir', type=str, default='./model', help='the directory that keeps the model file')
+    parser.add_argument('--model-dir', type=str, default='./model', help='the directory that keeps the model file')
     parser.add_argument('--activation', type=str, default='relu', help='activation function')
     parser.add_argument('--optimizer', type=str, default='grad', help='optimizer')
     parser.add_argument('--num-epochs', type=int, default=10, help='the number of training epochs')
