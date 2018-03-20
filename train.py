@@ -107,9 +107,9 @@ def main():
     checkpoint_prefix = os.path.join(checkpoint_dir, "model")
     with tf.Graph().as_default(), tf.Session() as sess:
         train = Train(config)
-        test = Test(config)
+        # test = Test(config)
         train_summary_writer = tf.summary.FileWriter(os.path.join(out_dir, "summaries", "train"), sess.graph)
-        test_summary_writer = tf.summary.FileWriter(os.path.join(out_dir, "summaries", "test"), sess.graph)
+        # test_summary_writer = tf.summary.FileWriter(os.path.join(out_dir, "summaries", "test"), sess.graph)
         sess.run((tf.global_variables_initializer(), tf.local_variables_initializer()))
         saver = tf.train.Saver(tf.global_variables(), max_to_keep=0)
         coord = tf.train.Coordinator()
@@ -118,8 +118,8 @@ def main():
         try:
             while not coord.should_stop():
                 step = train.train_step(sess, train_summary_writer)
-                if step % config.test_freq == 0:
-                    test.test_step(sess, test_summary_writer)
+                # if step % config.test_freq == 0:
+                #     test.test_step(sess, test_summary_writer)
                 if step % config.save_freq == 0:
                     path = saver.save(sess, checkpoint_prefix, step)
                     print("Saved model checkpoint to {}\n".format(path))

@@ -79,7 +79,7 @@ def load_all_data_at_once(data_path, max_query_term_length, max_doc_term_length,
         shuffle_indices = np.random.permutation(np.arange(len(test_data)))
         test_data = test_data[shuffle_indices][:max_num]
 
-    test_data_split = np.split(test_data, [max_query_term_length, max_query_term_length + max_doc_term_length], axis=1)
+    test_data_split = np.split(test_data, [max_query_term_length, 2 * max_doc_term_length], axis=1)
     query_term_ids = test_data_split[0]
     pos_doc_term_ids = test_data_split[1]
     neg_doc_term_ids = test_data_split[2]
