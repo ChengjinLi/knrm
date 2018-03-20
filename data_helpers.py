@@ -18,9 +18,9 @@ SEPARATOR = ','
 
 def get_config_args():
     parser = argparse.ArgumentParser(description='knrm train argument')
-    parser.add_argument('--train-data-path', type=str, default='./data/train.pairs.hashed.shuf',
+    parser.add_argument('--train-data-path', type=str, default='/home/search/lichengjin/data/dssm_training_data/part-00001',
                         help='the path that keeps the train data file')
-    parser.add_argument('--test-data-path', type=str, default='./data/dev.pairs.hashed.shuf',
+    parser.add_argument('--test-data-path', type=str, default='/home/search/lichengjin/data/test',
                         help='the path that keeps the test data file')
     # parser.add_argument('--train-data-path', type=str, default='./data/train.pairs.hashed.shuf',
     #                     help='the path that keeps the train data file')

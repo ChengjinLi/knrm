@@ -59,7 +59,7 @@ class Test(object):
                                                                        config.max_doc_term_length,
                                                                        config.test_num)
         self.input_query_ph = tf.placeholder(tf.int32, [None, config.max_query_term_length], name='input_query')
-        self.input_doc_ph = tf.placeholder(tf.int32, [None, 2, config.max_doc_term_length], name='input_doc')
+        self.input_doc_ph = tf.placeholder(tf.int32, [None, 5, config.max_doc_term_length], name='input_doc')
         with tf.name_scope('test') as scope:
             with tf.variable_scope('model', reuse=True):
                 self.model = KNRMModel(self.input_query_ph, self.input_doc_ph, config, scope)
