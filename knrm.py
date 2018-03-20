@@ -113,7 +113,7 @@ class KNRMModel(object):
             self.neg_scores = tf.slice(self.scores, [0, 1], [-1, -1], name='neg_scores')
             print "neg_scores: ", self.neg_scores
             # loss, max(0, 1 - score1 + score2)
-            self.loss = tf.reduce_mean(tf.maximum(0.0, 1 - self.pos_scores + self.neg_scores))
+            self.loss = tf.reduce_mean(tf.maximum(0.0, 1 - self.pos_scores + tf.reduce_mean(self.neg_scores, 1)))
             tf.summary.scalar("loss", self.loss)
 
         self.global_step = tf.train.get_or_create_global_step()
