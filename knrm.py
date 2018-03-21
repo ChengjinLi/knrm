@@ -57,11 +57,13 @@ class KNRMModel(object):
 
         with tf.name_scope('translation'):
             # normalize and compute translation matrix.
-            norm_query = tf.sqrt(tf.reduce_sum(tf.square(self.query_embedded), 2, keep_dims=True))
-            self.query_embedded_normalized = self.query_embedded / norm_query
-            norm_doc = tf.sqrt(tf.reduce_sum(tf.square(self.doc_embedded), 3, keep_dims=True))
-            doc_embedded_normalized = self.doc_embedded / norm_doc
-            self.doc_embedded_normalized = tf.reshape(doc_embedded_normalized,
+            self.query_embedded_normalized = tf.nn.l2_normalize(self.query_embedded, 2)
+            # norm_query = tf.sqrt(tf.reduce_sum(tf.square(self.query_embedded), 2, keep_dims=True))
+            # self.query_embedded_normalized = self.query_embedded / norm_query
+            # norm_doc = tf.sqrt(tf.reduce_sum(tf.square(self.doc_embedded), 3, keep_dims=True))
+            # doc_embedded_normalized = self.doc_embedded / norm_doc
+            self.doc_embedded_normalized = tf.nn.l2_normalize(self.doc_embedded, 3)
+            self.doc_embedded_normalized = tf.reshape(self.doc_embedded_normalized,
                                                       [-1, num_per_entry * self.max_doc_term_length,
                                                        self.embedding_dim])
             self.translation_matrix = tf.matmul(self.query_embedded_normalized,
@@ -83,7 +85,7 @@ class KNRMModel(object):
             kde = tf.reduce_sum(tmp_reshape, [3])
             # aggregated query terms，store the soft-TF features from each field.
             soft_tf_feats = tf.reduce_sum(tf.log(tf.maximum(kde, 1e-10)) * 0.01, [2])  # 0.01 used to scale down the data.
-            # [batch, num_per_entry, n_bins]
+            # [batch, num_per_entry, kernel_num]
             print "batch feature shape:", soft_tf_feats.get_shape()
             feats_flat = tf.reshape(soft_tf_feats, [-1, self.kernel_num])
 
