@@ -38,8 +38,14 @@ class Train(object):
         fetches = [self.model.train_op,
                    self.model.global_step,
                    self.model.loss,
+                   self.model.pos_scores,
+                   self.model.neg_scores,
                    self.model.summary]
-        _, global_step, loss_val, summary = session.run(fetches)
+        _, global_step, loss_val, pos_scores_val, neg_scores_val, summary = session.run(fetches)
+        print "pos_scores_val"
+        print pos_scores_val
+        print "neg_scores_val"
+        print neg_scores_val
         if self.config.show_freq and (global_step <= 100 or global_step % self.config.show_freq == 0):
             step_time = time.time() - start_time
             examples_per_sec = self.config.batch_size / step_time
