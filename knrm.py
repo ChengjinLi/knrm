@@ -95,7 +95,7 @@ class KNRMModel(object):
             )
             self.bias = tf.get_variable(
                 'bias',
-                shape=[1],
+                # shape=[1],
                 dtype=tf.float32,
                 initializer=tf.zeros([1])
             )
