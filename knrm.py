@@ -105,14 +105,21 @@ class KNRMModel(object):
             scores = self.activation(tf.matmul(feats_flat, self.weight) + self.bias)
             self.scores = tf.reshape(scores, [-1, num_per_entry])
             print "scores: ", self.scores
-            self.pos_scores = tf.slice(self.scores, [0, 0], [-1, 1], name='pos_scores')
-            print "pos_scores: ", self.pos_scores
-            self.neg_scores = tf.slice(self.scores, [0, 1], [-1, -1], name='neg_scores')
-            print "neg_scores: ", self.neg_scores
-            self.pos_scores = tf.tile(self.pos_scores, [1, tf.shape(self.neg_scores)[1]])
-            # loss, max(0, 1 - score1 + score2)
-            self.loss = tf.reduce_mean(tf.reduce_mean(
-                tf.maximum(0.0, 1 - self.pos_scores + self.neg_scores), 1))
+            # hinge loss
+            # self.pos_scores = tf.slice(self.scores, [0, 0], [-1, 1], name='pos_scores')
+            # print "pos_scores: ", self.pos_scores
+            # self.neg_scores = tf.slice(self.scores, [0, 1], [-1, -1], name='neg_scores')
+            # print "neg_scores: ", self.neg_scores
+            # self.pos_scores = tf.tile(self.pos_scores, [1, tf.shape(self.neg_scores)[1]])
+            # # loss, max(0, 1 - score1 + score2)
+            # self.loss = tf.reduce_mean(tf.reduce_mean(
+            #     tf.maximum(0.0, 1 - self.pos_scores + self.neg_scores), 1))
+            # cross_entropy
+            gamma = tf.get_variable("loss_gamma", initializer=1., trainable=True)
+            self.scores = self.scores * gamma
+            label = tf.zeros(tf.stack([tf.shape(self.scores)[0]]), dtype=tf.int32)
+            self.loss = tf.nn.sparse_softmax_cross_entropy_with_logits(logits=self.scores, labels=label)
+            self.loss = tf.reduce_mean(self.loss)
             tf.summary.scalar("loss", self.loss)
 
         # self.global_step = tf.train.get_or_create_global_step()
