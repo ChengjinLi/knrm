@@ -58,10 +58,6 @@ class KNRMModel(object):
         with tf.name_scope('translation'):
             # normalize and compute translation matrix.
             self.query_embedded_normalized = tf.nn.l2_normalize(self.query_embedded, 2)
-            # norm_query = tf.sqrt(tf.reduce_sum(tf.square(self.query_embedded), 2, keep_dims=True))
-            # self.query_embedded_normalized = self.query_embedded / norm_query
-            # norm_doc = tf.sqrt(tf.reduce_sum(tf.square(self.doc_embedded), 3, keep_dims=True))
-            # doc_embedded_normalized = self.doc_embedded / norm_doc
             self.doc_embedded_normalized = tf.nn.l2_normalize(self.doc_embedded, 3)
             self.doc_embedded_normalized = tf.reshape(self.doc_embedded_normalized,
                                                       [-1, num_per_entry * self.max_doc_term_length,
@@ -91,18 +87,17 @@ class KNRMModel(object):
 
         # Learning-To-Rank layer.
         with tf.name_scope("learning_to_rank"):
-            tmp = np.sqrt(6.0 / (self.kernel_num + 1))
             self.weight = tf.get_variable(
                 'weight',
                 shape=[self.kernel_num, 1],
                 dtype=tf.float32,
-                initializer=tf.random_uniform_initializer(-1 * tmp, tmp)
+                initializer=tf.contrib.layers.xavier_initializer()
             )
             self.bias = tf.get_variable(
                 'bias',
                 shape=[1],
                 dtype=tf.float32,
-                initializer=tf.constant_initializer(1.0)
+                initializer=tf.zeros([1])
             )
 
         with tf.name_scope("output"):
