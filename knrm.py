@@ -41,6 +41,13 @@ class KNRMModel(object):
                 self.optimizer = tf.train.AdamOptimizer
             else:
                 self.optimizer = tf.train.GradientDescentOptimizer
+            # Get the mu for each gaussian kernel
+            self.mu_list = self.kernel_mu(self.kernel_num)
+            # self.mu_list = tf.reshape(self.mu_list, shape=[1, 1, self.kernel_num])
+            self.lamb = config.lamb
+            # Get the sigma for each gaussian kernel
+            self.sigma_list = self.kernel_sigma(self.kernel_num, self.lamb)
+            # self.sigma_list = tf.reshape(self.sigma_list, shape=[1, 1, self.kernel_num])
 
         with tf.name_scope('embedding'):
             # look up embeddings for each term.
@@ -67,15 +74,9 @@ class KNRMModel(object):
                                                 transpose_b=True, name='translation_matrix')
 
         with tf.name_scope("kernel_pooling"):
-            # Get the mu for each gaussian kernel
-            self.mu_list = self.kernel_mu(self.kernel_num)
-            # self.mu_list = tf.reshape(self.mu_list, shape=[1, 1, self.kernel_num])
-            self.lamb = config.lamb
-            # Get the sigma for each gaussian kernel
-            self.sigma_list = self.kernel_sigma(self.kernel_num, self.lamb)
-            # self.sigma_list = tf.reshape(self.sigma_list, shape=[1, 1, self.kernel_num])
+            self.translation_matrix = tf.expand_dims(self.translation_matrix, -1)
             # compute Gaussian scores of each kernel
-            tmp = tf.exp(-tf.square(tf.subtract(tf.expand_dims(self.translation_matrix, -1), self.mu_list)) / (2 * tf.square(self.sigma_list)))
+            tmp = tf.exp(-tf.square(tf.subtract(self.translation_matrix, self.mu_list)) / (tf.matmul(tf.square(self.sigma_list), 2)))
             tmp_reshape = tf.reshape(tmp, [-1, num_per_entry, self.max_query_term_length, self.max_doc_term_length, self.kernel_num])
             # sum up gaussian scores
             kde = tf.reduce_sum(tmp_reshape, [3])
@@ -83,10 +84,9 @@ class KNRMModel(object):
             soft_tf_feats = tf.reduce_sum(tf.log(tf.maximum(kde, 1e-10)) * 0.01, [2])  # 0.01 used to scale down the data.
             # [batch, num_per_entry, kernel_num]
             print "batch feature shape:", soft_tf_feats.get_shape()
-            feats_flat = tf.reshape(soft_tf_feats, [-1, self.kernel_num])
 
-        # Learning-To-Rank layer.
         with tf.name_scope("learning_to_rank"):
+            feats_flat = tf.reshape(soft_tf_feats, [-1, self.kernel_num])
             self.weight = tf.get_variable(
                 'weight',
                 shape=[self.kernel_num, 1],
@@ -95,12 +95,9 @@ class KNRMModel(object):
             )
             self.bias = tf.get_variable(
                 'bias',
-                # shape=[1],
                 dtype=tf.float32,
                 initializer=tf.zeros([1])
             )
-
-        with tf.name_scope("output"):
             # scores is the final matching score.
             scores = self.activation(tf.matmul(feats_flat, self.weight) + self.bias)
             self.scores = tf.reshape(scores, [-1, num_per_entry])
