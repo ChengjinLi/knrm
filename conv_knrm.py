@@ -139,7 +139,7 @@ class ConvKNRMModel(object):
             for h2_idx, doc_emb in enumerate(doc_embedded_list):
                 if h1_idx != h2_idx and not self.cross:
                     continue
-                doc_emb = tf.reshape(doc_emb, [-1, num_per_entry * self.max_doc_term_length, self.num_filters])
+                doc_emb = tf.reshape(doc_emb, [-1, num_per_entry * (self.max_doc_term_length - h2_idx), self.num_filters])
                 # translation_matrix, [batch_size, max_query_term_length, num_per_entry * max_doc_term_length]
                 translation_matrix = tf.matmul(query_emb, doc_emb, transpose_b=True, name='translation_matrix')
                 translation_matrix_rs = tf.expand_dims(translation_matrix, -1)
@@ -148,7 +148,7 @@ class ConvKNRMModel(object):
 
                 # kernel_pooling，compute Gaussian scores of each kernel
                 tmp = tf.exp(-tf.square(tf.subtract(translation_matrix_rs, self.mu_list)) / 2 * tf.square(self.sigma_list))
-                tmp_reshape = tf.reshape(tmp, [-1, num_per_entry, self.max_query_term_length, self.max_doc_term_length, self.kernel_num])
+                tmp_reshape = tf.reshape(tmp, [-1, num_per_entry, self.max_query_term_length - h1_idx, self.max_doc_term_length - h2_idx, self.kernel_num])
                 # sum up gaussian scores
                 kde = tf.reduce_sum(tmp_reshape, [3])
                 # aggregated query terms，store the soft-TF features from each field.
