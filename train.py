@@ -12,6 +12,7 @@ import time
 import tensorflow as tf
 from data_helpers import get_config_args, load_all_data_at_once, load_batch_data_by_queue
 from knrm import KNRMModel
+from conv_knrm import ConvKNRMModel
 
 
 class Train(object):
@@ -30,7 +31,8 @@ class Train(object):
                                                                 12)
         with tf.name_scope('train') as scope:
             with tf.variable_scope('model'):
-                self.model = KNRMModel(query_term_ids, doc_term_ids, config, scope)
+                # self.model = KNRMModel(query_term_ids, doc_term_ids, config, scope)
+                self.model = ConvKNRMModel(query_term_ids, doc_term_ids, config, scope)
 
     def train_step(self, session, summary_writer=None):
         """train step"""

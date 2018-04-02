@@ -5,7 +5,6 @@ Created on 2017年07月06日
 
 @author: lichengjin
 """
-import numpy as np
 import tensorflow as tf
 
 
@@ -83,7 +82,7 @@ class KNRMModel(object):
             # aggregated query terms，store the soft-TF features from each field.
             soft_tf_feats = tf.reduce_sum(tf.log(tf.maximum(kde, 1e-10)) * 0.01, [2])  # 0.01 used to scale down the data.
             # [batch, num_per_entry, kernel_num]
-            print "batch feature shape:", soft_tf_feats.get_shape()
+            print_variable_info(soft_tf_feats)
 
         with tf.name_scope("learning_to_rank"):
             feats_flat = tf.reshape(soft_tf_feats, [-1, self.kernel_num])
@@ -101,7 +100,7 @@ class KNRMModel(object):
             # scores is the final matching score.
             scores = self.activation(tf.matmul(feats_flat, self.weight) + self.bias)
             self.scores = tf.reshape(scores, [-1, num_per_entry])
-            print "scores: ", self.scores
+            print_variable_info(self.scores)
             # hinge loss
             # self.pos_scores = tf.slice(self.scores, [0, 0], [-1, 1], name='pos_scores')
             # print "pos_scores: ", self.pos_scores
