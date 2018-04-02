@@ -75,7 +75,7 @@ class KNRMModel(object):
         with tf.name_scope("kernel_pooling"):
             self.translation_matrix = tf.expand_dims(self.translation_matrix, -1)
             # compute Gaussian scores of each kernel
-            tmp = tf.exp(-tf.square(tf.subtract(self.translation_matrix, self.mu_list)) / (tf.matmul(tf.square(self.sigma_list), 2)))
+            tmp = tf.exp(-tf.square(tf.subtract(self.translation_matrix, self.mu_list)) / 2 * tf.square(self.sigma_list))
             tmp_reshape = tf.reshape(tmp, [-1, num_per_entry, self.max_query_term_length, self.max_doc_term_length, self.kernel_num])
             # sum up gaussian scores
             kde = tf.reduce_sum(tmp_reshape, [3])

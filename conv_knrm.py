@@ -143,7 +143,7 @@ class ConvKNRMModel(object):
                 translation_matrix_list.append(translation_matrix_rs)
 
                 # kernel_pooling，compute Gaussian scores of each kernel
-                tmp = tf.exp(-tf.square(tf.subtract(translation_matrix_rs, self.mu_list)) / (tf.matmul(tf.square(self.sigma_list), 2)))
+                tmp = tf.exp(-tf.square(tf.subtract(translation_matrix_rs, self.mu_list)) / 2 * tf.square(self.sigma_list))
                 tmp_reshape = tf.reshape(tmp, [-1, num_per_entry, self.max_query_term_length, self.max_doc_term_length, self.kernel_num])
                 # sum up gaussian scores
                 kde = tf.reduce_sum(tmp_reshape, [3])
