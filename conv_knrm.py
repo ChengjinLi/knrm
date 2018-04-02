@@ -34,13 +34,13 @@ class ConvKNRMModel(object):
             self.vocabulary_size = config.vocabulary_size
             self.embedding_dim = config.embedding_dim
             self.cross = config.cross
-            self.h_max = config.h_max
+            self.max_ngram = config.max_ngram
             self.use_exact = config.use_exact
             # Model parameters for feedfoward rank NN
-            if self.cross:  # 不同粒度交叉匹配，所以是self.h_max * self.h_max
-                self.total_bins = self.kernel_num * self.h_max * self.h_max
-            else:  # 相同粒度匹配，所以是self.h_max
-                self.total_bins = self.kernel_num * self.h_max
+            if self.cross:  # 不同粒度交叉匹配，所以是self.max_ngram * self.max_ngram
+                self.total_bins = self.kernel_num * self.max_ngram * self.max_ngram
+            else:  # 相同粒度匹配，所以是self.max_ngram
+                self.total_bins = self.kernel_num * self.max_ngram
             if 'relu' == config.activation:
                 self.activation = tf.nn.relu
             else:
@@ -81,7 +81,7 @@ class ConvKNRMModel(object):
         # Model parameters for convolutions
         query_embedded_list = []
         doc_embedded_list = []
-        for h in range(1, self.h_max + 1):
+        for h in range(1, self.max_ngram + 1):
             with tf.variable_scope("conv-{0}-gram".format(h)):
                 # 卷积层
                 filter_shape = [h, self.embedding_dim, 1, self.num_filters]
