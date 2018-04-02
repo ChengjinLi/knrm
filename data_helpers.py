@@ -42,6 +42,8 @@ def get_config_args():
                         help='use to the gaussian kernels sigma value, sigma = lamb * bin_size')
     parser.add_argument('--num-filters', type=int, default=128,
                         help='number of ngram cnn filters')
+    parser.add_argument('--cross', action='store_true', default=True,
+                        help='use cross')
     parser.add_argument('--init-scale', type=float, default=0.1, help='init scale')
     parser.add_argument('--show-freq', type=int, default=10, help='Show train results after this many steps')
     parser.add_argument('--test-freq', type=int, default=10, help='Test model results after this many steps')
