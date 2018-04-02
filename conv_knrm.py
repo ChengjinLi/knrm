@@ -125,6 +125,10 @@ class ConvKNRMModel(object):
 
                 query_embedded_normalized = tf.nn.l2_normalize(query_h, 2)
                 doc_embedded_normalized = tf.nn.l2_normalize(doc_h, 2)
+                print ("query_embedded_normalized")
+                print_variable_info(query_embedded_normalized)
+                print ("doc_embedded_normalized")
+                print_variable_info(doc_embedded_normalized)
 
                 query_embedded_list.append(query_embedded_normalized)
                 doc_embedded_list.append(doc_embedded_normalized)
