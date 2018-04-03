@@ -34,7 +34,7 @@ def get_config_args():
     parser.add_argument('--embedding-dim', type=int, default=200, help='Dimensionality of word embedding')
     parser.add_argument('--vocabulary-size', type=int, default=10, help='Size of vocabulary')
     parser.add_argument('--learning-rate', type=float, default=0.1, help='the learning rate')
-    parser.add_argument('--max-query-term-length', type=int, default=20, help='the max query term length')
+    parser.add_argument('--max-query-term-length', type=int, default=5, help='the max query term length')
     parser.add_argument('--max-doc-term-length', type=int, default=20, help='the max doc term length')
     parser.add_argument('--kernel-num', type=int, default=11,
                         help='the number of kernels, default: 11. One exact match kernel and 10 soft kernels')
@@ -111,7 +111,7 @@ def load_batch_data_by_queue(filename_list, max_query_term_length, max_doc_term_
     split_size = [max_query_term_length] + [max_doc_term_length * 5]
     # query_term_ids, pos_doc_term_ids, neg_doc_term_ids = tf.split(temp_tensor, split_size, 1)
     query_term_ids, doc_term_ids = tf.split(temp_tensor, split_size, 1)
-    doc_term_ids = tf.reshape(doc_term_ids, [-1, 5, max_doc_term_length])
+    doc_term_ids = tf.reshape(doc_term_ids, [-1, 2, max_doc_term_length])
     # doc_term_ids = tf.concat([tf.expand_dims(pos_doc_term_ids, 1), tf.expand_dims(neg_doc_term_ids, 1)], axis=1)
     batch_data = tf.train.shuffle_batch((query_term_ids, doc_term_ids),
                                         batch_size=batch_size,
