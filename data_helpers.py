@@ -114,11 +114,16 @@ def load_batch_data_by_queue(filename_list, max_query_term_length, max_doc_term_
     # doc_term_ids = tf.reshape(doc_term_ids, [-1, 5, max_doc_term_length])
     doc_term_ids = tf.reshape(doc_term_ids, [-1, 2, max_doc_term_length])
     # doc_term_ids = tf.concat([tf.expand_dims(pos_doc_term_ids, 1), tf.expand_dims(neg_doc_term_ids, 1)], axis=1)
-    batch_data = tf.train.shuffle_batch((query_term_ids, doc_term_ids),
-                                        batch_size=batch_size,
-                                        capacity=batch_size*200,
-                                        min_after_dequeue=batch_size*10,
-                                        num_threads=num_threads,
-                                        enqueue_many=True)
+    # batch_data = tf.train.shuffle_batch((query_term_ids, doc_term_ids),
+    #                                     batch_size=batch_size,
+    #                                     capacity=batch_size*200,
+    #                                     min_after_dequeue=batch_size*10,
+    #                                     num_threads=num_threads,
+    #                                     enqueue_many=True)
+    batch_data = tf.train.batch((query_term_ids, doc_term_ids),
+                                batch_size=batch_size,
+                                capacity=batch_size * 200,
+                                num_threads=num_threads,
+                                enqueue_many=True)
 
     return batch_data
