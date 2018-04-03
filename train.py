@@ -39,9 +39,34 @@ class Train(object):
         start_time = time.time()
         fetches = [self.model.train_op,
                    self.model.global_step,
+                   self.model.input_query,
+                   self.model.input_doc,
+                   self.model.embedding_weight,
+                   self.model.query_embedded,
+                   self.model.query_embedded_expanded,
+                   self.model.doc_embedded,
+                   self.model.doc_embedded_expanded,
+                   self.model.input_doc_rs,
                    self.model.loss,
                    self.model.summary]
-        _, global_step, loss_val, summary = session.run(fetches)
+        _, global_step, input_query, input_doc, embedding_weight, query_embedded, query_embedded_expanded, doc_embedded, doc_embedded_expanded, input_doc_rs, loss_val, summary = session.run(fetches)
+        print ("input_query")
+        print input_query
+        print "input_doc"
+        print input_doc
+        print "embedding_weight"
+        print embedding_weight
+        print "query_embedded"
+        print query_embedded
+        print "query_embedded_expanded"
+        print query_embedded_expanded
+        print "doc_embedded"
+        print doc_embedded
+        print "doc_embedded_expanded"
+        print doc_embedded_expanded
+        print "input_doc_rs"
+        print input_doc_rs
+        exit(0)
         if self.config.show_freq and (global_step <= 100 or global_step % self.config.show_freq == 0):
             step_time = time.time() - start_time
             examples_per_sec = self.config.batch_size / step_time

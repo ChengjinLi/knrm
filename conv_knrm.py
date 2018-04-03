@@ -21,6 +21,8 @@ class ConvKNRMModel(object):
     """
     def __init__(self, input_query, input_doc, config, scope):
         with tf.name_scope('input'):
+            self.input_query = input_query
+            self.input_doc = input_doc
             print_variable_info(input_query)
             print_variable_info(input_doc)
             # num_per_entry在train过程中要设置成2，test过程大于等于1即可，方便一次处理 一个query与多个doc的score
@@ -64,15 +66,15 @@ class ConvKNRMModel(object):
                 shape=[self.vocabulary_size + 1, self.embedding_dim],
                 initializer=tf.random_uniform_initializer(-1 * self.init_scale, 1 * self.init_scale))
             # query_embedded, [batch_size, max_query_term_length, embedding_dim]
-            self.query_embedded = tf.nn.embedding_lookup(self.embedding_weight, input_query, name='query_embedded')
+            self.query_embedded = tf.nn.embedding_lookup(self.embedding_weight, self.input_query, name='query_embedded')
             print_variable_info(self.query_embedded)
             # query_embedded_expanded, [batch_size, max_query_term_length, embedding_dim, 1]
             self.query_embedded_expanded = tf.expand_dims(self.query_embedded, -1)
             print_variable_info(self.query_embedded_expanded)
             # input_doc_rs, [batch_size * num_per_entry, max_doc_term_length]
-            input_doc_rs = tf.reshape(input_doc, [-1, self.max_doc_term_length])
+            self.input_doc_rs = tf.reshape(self.input_doc, [-1, self.max_doc_term_length])
             # doc_embedded, [batch_size * num_per_entry, max_doc_term_length, embedding_dim]
-            self.doc_embedded = tf.nn.embedding_lookup(self.embedding_weight, input_doc_rs, name='doc_embedded')
+            self.doc_embedded = tf.nn.embedding_lookup(self.embedding_weight, self.input_doc_rs, name='doc_embedded')
             print_variable_info(self.doc_embedded)
             # doc_embedded_expanded, [batch_size * num_per_entry, max_doc_term_length, embedding_dim, 1]
             self.doc_embedded_expanded = tf.expand_dims(self.doc_embedded, -1)
