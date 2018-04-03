@@ -35,7 +35,7 @@ def get_config_args():
     parser.add_argument('--vocabulary-size', type=int, default=10, help='Size of vocabulary')
     parser.add_argument('--learning-rate', type=float, default=0.1, help='the learning rate')
     parser.add_argument('--max-query-term-length', type=int, default=5, help='the max query term length')
-    parser.add_argument('--max-doc-term-length', type=int, default=20, help='the max doc term length')
+    parser.add_argument('--max-doc-term-length', type=int, default=5, help='the max doc term length')
     parser.add_argument('--kernel-num', type=int, default=11,
                         help='the number of kernels, default: 11. One exact match kernel and 10 soft kernels')
     parser.add_argument('--lamb', type=float, default=0.5,
