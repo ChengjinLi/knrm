@@ -50,12 +50,12 @@ class ConvKNRMModel(object):
             else:
                 self.optimizer = tf.train.GradientDescentOptimizer
             # Get the mu for each gaussian kernel
-            self.mu_list = self.kernel_mu(self.kernel_num, self.use_exact)
-            # self.mu_list = tf.reshape(self.mu_list, shape=[1, 1, self.kernel_num])
+            # self.mu_list = self.kernel_mu(self.kernel_num, self.use_exact)
+            self.mu_list = tf.reshape(self.mu_list, shape=[1, 1, self.kernel_num])
             self.lamb = config.lamb
             # Get the sigma for each gaussian kernel
-            self.sigma_list = self.kernel_sigma(self.kernel_num, self.lamb)
-            # self.sigma_list = tf.reshape(self.sigma_list, shape=[1, 1, self.kernel_num])
+            # self.sigma_list = self.kernel_sigma(self.kernel_num, self.lamb)
+            self.sigma_list = tf.reshape(self.sigma_list, shape=[1, 1, self.kernel_num])
 
         with tf.name_scope('embedding'):
             # look up embeddings for each term.
