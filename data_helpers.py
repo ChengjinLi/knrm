@@ -18,7 +18,7 @@ SEPARATOR = ','
 
 def get_config_args():
     parser = argparse.ArgumentParser(description='knrm train argument')
-    parser.add_argument('--train-data-path', type=str, default='/home/search/lichengjin/data/test',
+    parser.add_argument('--train-data-path', type=str, default='data/test',
                         help='the path that keeps the train data file')
     parser.add_argument('--test-data-path', type=str, default='/home/search/lichengjin/data/test',
                         help='the path that keeps the test data file')
@@ -107,7 +107,7 @@ def load_batch_data_by_queue(filename_list, max_query_term_length, max_doc_term_
     record_defaults = [tf.constant([], dtype=tf.int32)] * (max_query_term_length + 2 * max_doc_term_length)
     # record_defaults = [tf.constant([], dtype=tf.int32)] * (max_query_term_length + 5 * max_doc_term_length)
     temp_tensor = tf.stack(tf.decode_csv(records, record_defaults, SEPARATOR), 1)
-    split_size = [max_query_term_length] + [max_doc_term_length] * 2
+    split_size = [max_query_term_length] + [max_doc_term_length * 2]
     # split_size = [max_query_term_length] + [max_doc_term_length * 5]
     # query_term_ids, pos_doc_term_ids, neg_doc_term_ids = tf.split(temp_tensor, split_size, 1)
     query_term_ids, doc_term_ids = tf.split(temp_tensor, split_size, 1)
