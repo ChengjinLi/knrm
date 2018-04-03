@@ -104,13 +104,14 @@ def load_batch_data_by_queue(filename_list, max_query_term_length, max_doc_term_
     filename_queue = tf.train.string_input_producer(filename_list, num_epochs=num_epochs)
     reader = tf.TextLineReader()
     _, records = reader.read_up_to(filename_queue, batch_size)
-    # record_defaults = [tf.constant([], dtype=tf.int32)] * (max_query_term_length + 2 * max_doc_term_length)
-    record_defaults = [tf.constant([], dtype=tf.int32)] * (max_query_term_length + 5 * max_doc_term_length)
+    record_defaults = [tf.constant([], dtype=tf.int32)] * (max_query_term_length + 2 * max_doc_term_length)
+    # record_defaults = [tf.constant([], dtype=tf.int32)] * (max_query_term_length + 5 * max_doc_term_length)
     temp_tensor = tf.stack(tf.decode_csv(records, record_defaults, SEPARATOR), 1)
-    # split_size = [max_query_term_length] + [max_doc_term_length] * 2
-    split_size = [max_query_term_length] + [max_doc_term_length * 5]
+    split_size = [max_query_term_length] + [max_doc_term_length] * 2
+    # split_size = [max_query_term_length] + [max_doc_term_length * 5]
     # query_term_ids, pos_doc_term_ids, neg_doc_term_ids = tf.split(temp_tensor, split_size, 1)
     query_term_ids, doc_term_ids = tf.split(temp_tensor, split_size, 1)
+    # doc_term_ids = tf.reshape(doc_term_ids, [-1, 5, max_doc_term_length])
     doc_term_ids = tf.reshape(doc_term_ids, [-1, 2, max_doc_term_length])
     # doc_term_ids = tf.concat([tf.expand_dims(pos_doc_term_ids, 1), tf.expand_dims(neg_doc_term_ids, 1)], axis=1)
     batch_data = tf.train.shuffle_batch((query_term_ids, doc_term_ids),
